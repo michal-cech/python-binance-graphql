@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "python-binance-graphql"
+version = "0.1.0"
+description = ""
+authors = ["Michal Čech <michal.cechy@seznam.cz>"]
+readme = "README.md"
+homepage = "https://github.com/michal-cech/python-binance-graphql"
+repository = "https://github.com/michal-cech/python-binance-graphql"
+keywords = ["graphql", "binance"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+strawberry-graphql = "^0.70.1"
+dataclasses_json = "^0.5.4"
+
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
