@@ -1,3 +1,5 @@
+from typing import Optional
+
 from dataclasses import dataclass
 from typing import List
 from dataclasses_json import dataclass_json
@@ -10,16 +12,16 @@ import strawberry
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
 class CoinInfo:
-    coin: str
-    free: float
-    freeze: float
-    ipoable: float
-    ipoing: float
-    isLegalMoney: bool
-    locked: float
-    name: str
-    networkList: List[NetworkInfo]
-    storage: float
-    trading: bool
-    withdrawAllEnable: bool
-    withdrawMin: float
+    coin: Optional[str] = None
+    free: Optional[float] = None
+    freeze: Optional[float] = None
+    ipoable: Optional[float] = None
+    ipoing: Optional[float] = None
+    isLegalMoney: Optional[bool] = None
+    locked: Optional[float] = None
+    name: Optional[str] = None
+    networkList: Optional[List[NetworkInfo]] = None
+    storage: Optional[float] = None
+    trading: Optional[bool] = None
+    withdrawAllEnable: Optional[bool] = None
+    withdrawing: Optional[float] = None

@@ -1,5 +1,6 @@
 from hashlib import sha256
 from functools import wraps
+import time
 from datetime import datetime
 import hmac
 
@@ -16,7 +17,8 @@ class BinanceRequest:
 
     @staticmethod
     def get_query_string(params):
-        query_string = "&".join(f"{k}={v}" for k, v in params.items())
+        query_string = "&".join(
+            f"{k}={v}" for k, v in params.items() if v is not None)
         return query_string
 
     @staticmethod
@@ -25,23 +27,36 @@ class BinanceRequest:
             f"Error! Status Code{response.status_code}, reason: {response.text}")
         raise (Exception)
 
+    @staticmethod
+    def _get_timestamp():
+        return int(datetime.now().timestamp() * 1000)
+
+    @staticmethod
+    def _serialize_response(response: dict, cls):
+        if isinstance(response, list):
+            return [cls.from_dict(obj) for obj in response]
+        return cls.from_dict(response)
+
     def __call__(self, func):
+        @wraps(func)
         def wrapper(obj, *args, **kwargs):
             payload = func(obj, *args, **kwargs)
             request_args = {
                 'url': f"{obj.base_uri}{self.path}",
                 'method': self.method,
-                'json': {}
             }
-            if payload:
-                request_args['json'] = payload
 
             if self.signed:
-                payload["json"].update(
-                    {"timestamp": datetime.timestamp(datetime.now())})
+                if not payload:
+                    payload = {}
+
+                payload.update(
+                    {"timestamp": self._get_timestamp()})
                 query_string = self.get_query_string(payload)
-                request_args["json"].update({"signature": hmac.new(
+                payload.update({"signature": hmac.new(
                     obj.secret.encode("utf-8"), query_string.encode("utf-8"), digestmod=sha256).hexdigest()})
+
+            request_args['params'] = payload
 
             request = requests.Request(**request_args)
             prepared = obj.session.prepare_request(request)
@@ -50,9 +65,10 @@ class BinanceRequest:
             if not ((self.method == 'GET' and response.status_code == 200) or
                     (response.status_code == 201)):
                 self._handle_error(response)
+
             result = response.json()
             if self.serialize_to:
-                result = self.serialize_to.from_dict(result)
+                result = self._serialize_response(result, self.serialize_to)
             return result
         return wrapper
 

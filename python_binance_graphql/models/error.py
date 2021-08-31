@@ -7,6 +7,6 @@ import strawberry
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
 @strawberry.type
-class SystemStatus:
-    status: int
-    msg: str
+class GenericError:
+    status_code: int
+    reason: str
