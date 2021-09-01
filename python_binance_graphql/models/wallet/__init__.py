@@ -14,3 +14,7 @@ from .asset_detail import AssetDetail
 from .trade_fee import TradeFee
 from .query_user_universal_transfer_history import QueryUserUniversalTransferHistory
 from .api_key_permissions import APIKeyPermissions
+from .withdraw import Withdraw
+from .dust_transfer import DustTransfer
+from .user_universal_transfer import UserUniversalTransfer
+from .funding_wallet import FundingWallet

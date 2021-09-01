@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from dataclasses_json.undefined import Undefined
 import strawberry
 from python_binance_graphql.utils.custom_types import BigInt
+from typing import Optional
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
@@ -19,4 +20,4 @@ class APIKeyPermissions:
     enableFutures: bool
     enableMargin: bool
     enableSpotAndMarginTrading: bool
-    tradingAuthorityExpirationTime: BigInt
+    tradingAuthorityExpirationTime: Optional[BigInt] = None

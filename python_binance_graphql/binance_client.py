@@ -1,12 +1,13 @@
 from dataclasses_json.cfg import T
+from marshmallow.fields import Decimal
 from requests import Session
 from hashlib import sha256
 from hmac import HMAC
 
 from .models import *
-#from .models import CoinInfo, SystemStatus, OldTradeLookup, Snapshot, DepositHistory, SavingsPosition, DepositAddress, AccountStatus
+# from .models import CoinInfo, SystemStatus, OldTradeLookup, Snapshot, DepositHistory, SavingsPosition, DepositAddress, AccountStatus
 from .utils.binance_request import BinanceGet, BinanceDelete, BinancePost, BinancePut
-from .utils.enums import BinanceTransferTypeEnum, BinanceFiatMovementEnum, BinanceFiatPaymentsEnum
+from .utils.enums import BinanceC2CTradeTypeEnum, BinanceTransferTypeEnum, BinanceFiatMovementEnum, BinanceFiatPaymentsEnum
 from typing import List, Optional, Dict
 
 
@@ -37,6 +38,7 @@ class BinanceClient:
         return HMAC(self.secret, data, digestmod=sha256).hexdigest()
 
     # WALLET SECTION
+    # GET
     @BinanceGet(path="/sapi/v1/system/status", serialize_to=SystemStatus)
     def get_system_status(self) -> SystemStatus:
         return
@@ -61,7 +63,7 @@ class BinanceClient:
                              withdrawOrderId: Optional[str] = None, offset: Optional[int] = None,
                              limit: Optional[int] = None, startTime: Optional[int] = None,
                              endTime: Optional[int] = None, recvWindow: Optional[int] = None) -> List[WithdrawHistory]:
-        return {"coin": coin, "withdrawOrderId": withdrawOrderId, "offset": offset, "limit": limit, "startTime": startTime, "endTime": endTime, "recvWindows": recvWindow}
+        return {"coin": coin, "withdrawOrderId": withdrawOrderId, "status": status, "offset": offset, "limit": limit, "startTime": startTime, "endTime": endTime, "recvWindows": recvWindow}
 
     @BinanceGet(path="/sapi/v1/capital/deposit/address", signed=True, serialize_to=DepositAddress)
     def get_deposit_address(self, coin: str, network: Optional[str] = None, recvWindow: Optional[int] = None) -> DepositAddress:
@@ -108,7 +110,7 @@ class BinanceClient:
         if (type == BinanceTransferTypeEnum.ISOLATEDMARGIN_ISOLATEDMARGIN or type == BinanceTransferTypeEnum.ISOLATEDMARGIN_MARGIN):
             if not fromSymbol:
                 raise(Exception)
-        if(type == BinanceTransferTypeEnum.MARGIN_ISOLATEDMARGIN or BinanceTransferTypeEnum.ISOLATEDMARGIN_ISOLATEDMARGIN):
+        if(type == BinanceTransferTypeEnum.MARGIN_ISOLATEDMARGIN or type == BinanceTransferTypeEnum.ISOLATEDMARGIN_ISOLATEDMARGIN):
             if not toSymbol:
                 raise(Exception)
 
@@ -116,10 +118,42 @@ class BinanceClient:
                 "fromSymbol": fromSymbol, "toSymbol": toSymbol, "recvWindow": recvWindow}
 
     @BinanceGet(path="/sapi/v1/account/apiRestrictions", signed=True, serialize_to=APIKeyPermissions)
-    def get_api_key_permissions(recvWindow: Optional[int] = None) -> APIKeyPermissions:
+    def get_api_key_permissions(self, recvWindow: Optional[int] = None) -> APIKeyPermissions:
         return {"recvWindow": recvWindow}
 
+    # POST
+    @BinancePost(path="/sapi/v1/account/disableFastWithdrawSwitch", signed=True)
+    def disable_fast_withdraw_switch(self, recvWindow: Optional[int] = None):
+        return {"recvWindow": recvWindow}
+
+    @BinancePost(path="/sapi/v1/account/enableFastWithdrawSwitch", signed=True)
+    def enable_fast_withdraw_switch(self, recvWindow: Optional[int] = None):
+        return {"recvWindow": recvWindow}
+
+    @BinancePost(path="/sapi/v1/capital/withdraw/apply", signed=True, serialize_to=Withdraw)
+    def withdraw(self, coin: str, address: str, amount: Decimal, withdrawOrderId: Optional[str] = None,
+                 network: Optional[str] = None, addressTag: Optional[str] = None, transactionFeeFlag: Optional[bool] = False,
+                 name: Optional[str] = None, recvWindow: Optional[int] = None) -> Withdraw:
+        return {"coin": coin, "address": address, "amount": amount, "withdrawOrderId": withdrawOrderId,
+                "network": network, "addressTag": addressTag, "transactionFeeFlag": transactionFeeFlag,
+                "name": name, "recvWindow": recvWindow}
+
+    @BinancePost(path="/sapi/v1/asset/dust", signed=True, serialize_to=DustTransfer)
+    def dust_transfer(self, asset: List[str], recvWindow: Optional[int] = None) -> DustTransfer:
+        return {"asset": asset, "recvWindow": recvWindow}
+
+    @BinancePost(path="/sapi/v1/asset/transfer", signed=True, serialize_to=UserUniversalTransfer)
+    def user_universal_transfer(self, type: BinanceTransferTypeEnum, asset: str, amount: Decimal,
+                                fromSymbol: Optional[str] = None, toSymbol: Optional[str] = None,
+                                recvWindow: Optional[int] = None) -> UserUniversalTransfer:
+        return {"type": type.value, "asset": asset, "amount": amount, "fromSymbol": fromSymbol, "toSymbol": toSymbol, "recvWindow": recvWindow}
+
+    @BinancePost(path="/sapi/v1/asset/get-funding-asset", signed=True, serialize_to=FundingWallet)
+    def fund_wallet(self, asset: Optional[str] = None, needBtcValuation: Optional[bool] = True, recvWindow: Optional[int] = None) -> List[FundingWallet]:
+        return {"asset": asset, "needBtcValuation": needBtcValuation, "recvWindow": recvWindow}
+
 # SAVINGS SECTION
+
     @BinanceGet(path="/sapi/v1/lending/daily/token/position", signed=True, serialize_to=SavingsPosition)
     def get_flexible_savings_positions(self, asset: Optional[str] = '', recvWindow: Optional[int] = None) -> List[SavingsPosition]:
         return {"asset": asset, "recvWindow": recvWindow}
@@ -136,3 +170,10 @@ class BinanceClient:
                                   endTime: Optional[int] = None, page: Optional[int] = 1, rows: Optional[int] = 100,
                                   recvWindow: Optional[int] = None) -> FiatPaymentsHistory:
         return {"transactionType": transactionType.value, "beginTime": beginTime, "endTime": endTime, "page": page, "rows": rows, "recvWindow": recvWindow}
+
+# C2C
+    @BinanceGet(path="/sapi/v1/c2c/orderMatch/listUserOrderHistory", signed=True, serialize_to=C2CTradeHistory)
+    def get_c2c_trade_history(self, tradeType: BinanceC2CTradeTypeEnum, startTimestamp: Optional[int] = None,
+                              endTimestamp: Optional[int] = None, page: Optional[int] = 1, rows: Optional[int] = 100,
+                              recvWindow: Optional[int] = None) -> C2CTradeHistory:
+        return {"tradeType": tradeType.value, "startTimestamp": startTimestamp, "endTimestamp": endTimestamp, "page": page, "rows": rows, "recvWindow": recvWindow}

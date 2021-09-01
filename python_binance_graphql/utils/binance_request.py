@@ -17,8 +17,17 @@ class BinanceRequest:
 
     @staticmethod
     def get_query_string(params):
-        query_string = "&".join(
-            f"{k}={v}" for k, v in params.items() if v is not None)
+        query_string = "&"
+        query_params = []
+
+        for k, v in params.items():
+            if v is None:
+                continue
+            if isinstance(v, list):
+                query_params += [f"{k}={val}" for val in v]
+            else:
+                query_params.append(f"{k}={v}")
+        query_string = query_string.join(query_params)
         return query_string
 
     @staticmethod
@@ -62,8 +71,7 @@ class BinanceRequest:
             prepared = obj.session.prepare_request(request)
             response = obj.session.send(prepared)
 
-            if not ((self.method == 'GET' and response.status_code == 200) or
-                    (response.status_code == 201)):
+            if response.status_code < 200 or response.status_code > 300:
                 self._handle_error(response)
 
             result = response.json()

@@ -1,4 +1,4 @@
-from enum import Enum, IntEnum
+from enum import Enum, IntEnum, auto
 
 
 class BinanceTransferTypeEnum(str, Enum):
@@ -40,3 +40,19 @@ class BinanceFiatMovementEnum(IntEnum):
 class BinanceFiatPaymentsEnum(IntEnum):
     BUY = 0
     SELL = 1
+
+
+class BinanceC2CTradeTypeEnum(str, Enum):
+    BUY = "BUY"
+    SELL = "SELL"
+
+
+class BinanceOrderStatus(str, Enum):
+    COMPLETED = auto()
+    PENDING = auto()
+    TRADING = auto()
+    BUYER_PAYED = auto()
+    DISTRIBUTING = auto()
+    IN_APPEAL = auto()
+    CANCELLED = auto()
+    CANCELLED_BY_SYSTEM = auto()
