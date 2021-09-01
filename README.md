@@ -1,4 +1,4 @@
-# python-binance-graphql
+# python-binance-graphql package
 
 ## About
 Wrapper over Binance API. The advantages of this package are the following:
