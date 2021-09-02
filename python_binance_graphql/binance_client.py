@@ -152,6 +152,19 @@ class BinanceClient:
     def fund_wallet(self, asset: Optional[str] = None, needBtcValuation: Optional[bool] = True, recvWindow: Optional[int] = None) -> List[FundingWallet]:
         return {"asset": asset, "needBtcValuation": needBtcValuation, "recvWindow": recvWindow}
 
+# MARKET DATA SECTION
+    @BinanceGet(path="/api/v3/ping")
+    def test_connectivity(self):
+        return
+
+    @BinanceGet(path="/api/v3/time", serialize_to=ServerTime)
+    def check_server_time(self) -> ServerTime:
+        return
+
+    @BinanceGet(path="/api/v3/exchangeInfo", serialize_to=ExchangeInfo)
+    def get_exchange_info(self, symbol: Optional[str] = None, symbols: Optional[List[str]] = None) -> ExchangeInfo:
+        return {"symbol": symbol, "symbols": symbols}
+
 # SAVINGS SECTION
 
     @BinanceGet(path="/sapi/v1/lending/daily/token/position", signed=True, serialize_to=SavingsPosition)

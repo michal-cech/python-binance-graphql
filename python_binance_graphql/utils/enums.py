@@ -56,3 +56,37 @@ class BinanceOrderStatus(str, Enum):
     IN_APPEAL = auto()
     CANCELLED = auto()
     CANCELLED_BY_SYSTEM = auto()
+
+
+class BinanceRateLimitersEnum(str, Enum):
+    REQUEST_WEIGHT = auto()
+    ORDERS = auto()
+    RAW_REQUESTS = auto()
+
+
+class BinanceExchangeFiltersEnum(str, Enum):
+    EXCHANGE_MAX_NUM_ORDERS = auto()
+    EXCHANGE_MAX_NUM_ALGO_ORDERS = auto()
+
+
+class BinanceOrderTypesEnum(str, Enum):
+    LIMIT = auto()
+    LIMIT_MAKER = auto()
+    MARKET = auto()
+    STOP_LOSS = auto()
+    STOP_LOSS_LIMIT = auto()
+    TAKE_PROFIT = auto()
+    TAKE_PROFIT_LIMIT = auto()
+
+
+class BinanceSymbolFiltersEnum(str, Enum):
+    PRICE_FILTER = auto()
+    PERCENT_PRICE = auto()
+    LOT_SIZE = auto()
+    MIN_NOTIONAL = auto()
+    ICEBERG_PARTS = auto()
+    MARKET_LOT_SIZE = auto()
+    MAX_NUM_ORDERS = auto()
+    MAX_NUM_ALGO_ORDERS = auto()
+    MAX_NUM_ICEBERG_ORDERS = auto()
+    MAX_POSITION = auto()
