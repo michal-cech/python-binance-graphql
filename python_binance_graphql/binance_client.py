@@ -3,6 +3,7 @@ from marshmallow.fields import Decimal
 from requests import Session
 from hashlib import sha256
 from hmac import HMAC
+from urllib.parse import urlencode
 
 from .models import *
 # from .models import CoinInfo, SystemStatus, OldTradeLookup, Snapshot, DepositHistory, SavingsPosition, DepositAddress, AccountStatus

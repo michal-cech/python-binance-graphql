@@ -1,10 +1,21 @@
 from dataclasses import dataclass
-from typing import List
-from python_binance_graphql.utils.enums import BinanceExchangeFiltersEnum, BinanceOrderTypesEnum, BinanceRateLimitersEnum, BinanceSymbolFiltersEnum
+from typing import List, Optional
+from python_binance_graphql.utils.enums import BinanceOrderTypesEnum
+from python_binance_graphql.models.filters import SymbolFilter, ExchangeFilter
 from dataclasses_json import dataclass_json
 from dataclasses_json.undefined import Undefined
 import strawberry
 from python_binance_graphql.utils.custom_types import BigInt
+
+
+@dataclass_json(undefined=Undefined.EXCLUDE)
+@dataclass
+@strawberry.type
+class RateLimitType:
+    rateLimitType: str
+    interval: str
+    intervalNum: int
+    limit: int
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
@@ -23,8 +34,8 @@ class Symbol:
     ocoAllowed: bool
     isSpotTradingAllowed: bool
     isMarginTradingAllowed: bool
-    filters: List[BinanceSymbolFiltersEnum]
     permissions: List[str]
+    filters: Optional[List[SymbolFilter]]
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
@@ -33,6 +44,6 @@ class Symbol:
 class ExchangeInfo:
     timezone: str
     serverTime: BigInt
-    rateLimits: List[BinanceRateLimitersEnum]
-    exchangeFilter: List[BinanceExchangeFiltersEnum]
+    rateLimits: List[RateLimitType]
     symbols: List[Symbol]
+    exchangeFilter: Optional[List[ExchangeFilter]] = None

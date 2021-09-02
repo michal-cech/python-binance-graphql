@@ -1,6 +1,8 @@
-from enum import Enum, IntEnum, auto
+from enum import Enum, IntEnum
+import strawberry
 
 
+@strawberry.enum
 class BinanceTransferTypeEnum(str, Enum):
     MAIN_C2C = "MAIN_C2C"
     MAIN_UMFUTURE = "MAIN_UMFUTURE"
@@ -32,61 +34,42 @@ class BinanceTransferTypeEnum(str, Enum):
     ISOLATEDMARGIN_ISOLATEDMARGIN = "ISOLATEDMARGIN_ISOLATEDMARGIN"
 
 
+@strawberry.enum
 class BinanceFiatMovementEnum(IntEnum):
     DEPOSIT = 0
     WITHDRAW = 1
 
 
+@strawberry.enum
 class BinanceFiatPaymentsEnum(IntEnum):
     BUY = 0
     SELL = 1
 
 
+@strawberry.enum
 class BinanceC2CTradeTypeEnum(str, Enum):
     BUY = "BUY"
     SELL = "SELL"
 
 
+@strawberry.enum
 class BinanceOrderStatus(str, Enum):
-    COMPLETED = auto()
-    PENDING = auto()
-    TRADING = auto()
-    BUYER_PAYED = auto()
-    DISTRIBUTING = auto()
-    IN_APPEAL = auto()
-    CANCELLED = auto()
-    CANCELLED_BY_SYSTEM = auto()
+    COMPLETED = "COMPLETED"
+    PENDING = "PENDING"
+    TRADING = "TRADING"
+    BUYER_PAYED = "BUYER_PAYED"
+    DISTRIBUTING = "DISTRIBUTING"
+    IN_APPEAL = "IN_APPEAL"
+    CANCELLED = "CANCELLED"
+    CANCELLED_BY_SYSTEM = "CANCELLED_BY_SYSTEM"
 
 
-class BinanceRateLimitersEnum(str, Enum):
-    REQUEST_WEIGHT = auto()
-    ORDERS = auto()
-    RAW_REQUESTS = auto()
-
-
-class BinanceExchangeFiltersEnum(str, Enum):
-    EXCHANGE_MAX_NUM_ORDERS = auto()
-    EXCHANGE_MAX_NUM_ALGO_ORDERS = auto()
-
-
+@strawberry.enum
 class BinanceOrderTypesEnum(str, Enum):
-    LIMIT = auto()
-    LIMIT_MAKER = auto()
-    MARKET = auto()
-    STOP_LOSS = auto()
-    STOP_LOSS_LIMIT = auto()
-    TAKE_PROFIT = auto()
-    TAKE_PROFIT_LIMIT = auto()
-
-
-class BinanceSymbolFiltersEnum(str, Enum):
-    PRICE_FILTER = auto()
-    PERCENT_PRICE = auto()
-    LOT_SIZE = auto()
-    MIN_NOTIONAL = auto()
-    ICEBERG_PARTS = auto()
-    MARKET_LOT_SIZE = auto()
-    MAX_NUM_ORDERS = auto()
-    MAX_NUM_ALGO_ORDERS = auto()
-    MAX_NUM_ICEBERG_ORDERS = auto()
-    MAX_POSITION = auto()
+    LIMIT = "LIMIT"
+    LIMIT_MAKER = "LIMIT_MAKER"
+    MARKET = "MARKET"
+    STOP_LOSS = "STOP_LOSS"
+    STOP_LOSS_LIMIT = "STOP_LOSS_LIMIT"
+    TAKE_PROFIT = "TAKE_PROFIT"
+    TAKE_PROFIT_LIMIT = "TAKE_PROFIT_LIMIT"
