@@ -10,7 +10,7 @@ Wrapper over Binance API. The advantages of this package are the following:
   - [x] Wallet
   - [x] Fiat
   - [x] C2C 
-  - [ ] Market Data
+  - [x] Market Data
   - [ ] Savings
   - [ ] Spot
   - [ ] Mining
