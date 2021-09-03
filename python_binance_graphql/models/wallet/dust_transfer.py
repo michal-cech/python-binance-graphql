@@ -1,3 +1,4 @@
+from python_binance_graphql.models.base_model import BaseModel
 from typing import List
 from dataclasses_json import dataclass_json
 from dataclasses import dataclass
@@ -21,7 +22,7 @@ class TransferResult:
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
 @strawberry.type
-class DustTransfer:
+class DustTransfer(BaseModel):
     totalServiceCharge: float
     totalTransfered: float
     transferResult: List[TransferResult]

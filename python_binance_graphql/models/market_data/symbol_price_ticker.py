@@ -1,6 +1,6 @@
+from dataclasses import dataclass
 from python_binance_graphql.models.base_model import BaseModel
 from dataclasses_json import dataclass_json
-from dataclasses import dataclass
 from dataclasses_json.undefined import Undefined
 import strawberry
 
@@ -8,10 +8,6 @@ import strawberry
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
 @strawberry.type
-class FundingWallet(BaseModel):
-    asset: str
-    free: float
-    locked: float
-    freeze: float
-    withdrawing: float
-    btcValuation: float
+class SymbolPriceTicker(BaseModel):
+    symbol: str
+    price: float

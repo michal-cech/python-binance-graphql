@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from python_binance_graphql.models.base_model import BaseModel
 from typing import List, Optional
 from python_binance_graphql.utils.enums import BinanceOrderTypesEnum
 from python_binance_graphql.models.filters import SymbolFilter, ExchangeFilter
@@ -41,7 +42,7 @@ class Symbol:
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
 @strawberry.type
-class ExchangeInfo:
+class ExchangeInfo(BaseModel):
     timezone: str
     serverTime: BigInt
     rateLimits: List[RateLimitType]

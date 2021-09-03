@@ -3,13 +3,13 @@ from marshmallow.fields import Decimal
 from requests import Session
 from hashlib import sha256
 from hmac import HMAC
-from urllib.parse import urlencode
+from urllib.parse import quote
 
 from .models import *
 # from .models import CoinInfo, SystemStatus, OldTradeLookup, Snapshot, DepositHistory, SavingsPosition, DepositAddress, AccountStatus
 from .utils.binance_request import BinanceGet, BinanceDelete, BinancePost, BinancePut
-from .utils.enums import BinanceC2CTradeTypeEnum, BinanceTransferTypeEnum, BinanceFiatMovementEnum, BinanceFiatPaymentsEnum
-from typing import List, Optional, Dict
+from .utils.enums import BinanceC2CTradeTypeEnum, BinanceKlineIntervalEnum, BinanceTransferTypeEnum, BinanceFiatMovementEnum, BinanceFiatPaymentsEnum
+from typing import List, Optional, Dict, Union
 
 
 class BinanceClient:
@@ -164,29 +164,69 @@ class BinanceClient:
 
     @BinanceGet(path="/api/v3/exchangeInfo", serialize_to=ExchangeInfo)
     def get_exchange_info(self, symbol: Optional[str] = None, symbols: Optional[List[str]] = None) -> ExchangeInfo:
+        if symbols:
+            symbols = str(symbols).replace("'", "\"").replace(" ", "")
         return {"symbol": symbol, "symbols": symbols}
 
-# SAVINGS SECTION
+    @BinanceGet(path="/api/v3/depth", serialize_to=OrderBook)
+    def get_order_book(self, symbol: str, limit: Optional[int] = 100) -> OrderBook:
+        return {"symbol": symbol, "limit": limit}
 
-    @BinanceGet(path="/sapi/v1/lending/daily/token/position", signed=True, serialize_to=SavingsPosition)
+    @BinanceGet(path="/api/v3/trades", serialize_to=RecentTrade)
+    def get_recent_trades(self, symbol: str, limit: Optional[int] = 500) -> List[RecentTrade]:
+        return {"symbol": symbol, "limit": limit}
+
+    @BinanceGet(path="/api/v3/historicalTrades", serialize_to=OldTrade)
+    def get_old_trades(self, symbol: str, limit: Optional[int] = 500, fromId: Optional[int] = None) -> List[OldTrade]:
+        return {"symbol": symbol, "limit": limit, "fromId": fromId}
+
+    @BinanceGet(path="/api/v3/aggTrades", serialize_to=AggregatedTrade)
+    def get_aggregated_trade_list(self, symbol: str, limit: Optional[int] = 500, fromId: Optional[int] = None,
+                                  startTime: Optional[int] = None, endTime: Optional[int] = None) -> List[AggregatedTrade]:
+        return {"symbol": symbol, "limit": limit, "fromId": fromId, "startTime": startTime, "endTime": endTime}
+
+    @BinanceGet(path="/api/v3/klines", serialize_to=Kline)
+    def get_kline_data(self, symbol: str, interval: BinanceKlineIntervalEnum, limit: Optional[int] = 500,
+                       startTime: Optional[int] = None, endTime: Optional[int] = None) -> List[Kline]:
+        return {"symbol": symbol, "limit": limit, "interval": interval.value, "startTime": startTime, "endTime": endTime}
+
+    @BinanceGet(path="/api/v3/avgPrice", serialize_to=CurrentAveragePrice)
+    def get_current_average_price(self, symbol: str) -> CurrentAveragePrice:
+        return {"symbol": symbol}
+
+    @BinanceGet(path="/api/v3/ticker/24hr", serialize_to=LastDayPriceChange)
+    def get_last_day_price_change(self, symbol: Optional[str] = None) -> Union[LastDayPriceChange, List[LastDayPriceChange]]:
+        return {"symbol": symbol}
+
+    @BinanceGet(path="/api/v3/ticker/price", serialize_to=SymbolPriceTicker)
+    def get_symbol_price_ticker(self, symbol: Optional[str] = None) -> Union[SymbolPriceTicker, List[SymbolPriceTicker]]:
+        return {"symbol": symbol}
+
+    @BinanceGet(path="/api/v3/ticker/bookTicker", serialize_to=SymbolOrderBookTicker)
+    def get_symbol_order_book_ticker(self, symbol: Optional[str] = None) -> Union[SymbolOrderBookTicker, List[SymbolOrderBookTicker]]:
+        return {"symbol": symbol}
+
+      # SAVINGS SECTION
+
+    @ BinanceGet(path="/sapi/v1/lending/daily/token/position", signed=True, serialize_to=SavingsPosition)
     def get_flexible_savings_positions(self, asset: Optional[str] = '', recvWindow: Optional[int] = None) -> List[SavingsPosition]:
         return {"asset": asset, "recvWindow": recvWindow}
 
 # FIAT ENDPOINTS
-    @BinanceGet(path="/sapi/v1/fiat/orders", signed=True, serialize_to=FiatHistory)
+    @ BinanceGet(path="/sapi/v1/fiat/orders", signed=True, serialize_to=FiatHistory)
     def get_fiat_movement_history(self, transactionType: BinanceFiatMovementEnum, beginTime: Optional[int] = None,
                                   endTime: Optional[int] = None, page: Optional[int] = 1, rows: Optional[int] = 100,
                                   recvWindow: Optional[int] = None) -> FiatHistory:
         return {"transactionType": transactionType.value, "beginTime": beginTime, "endTime": endTime, "page": page, "rows": rows, "recvWindow": recvWindow}
 
-    @BinanceGet(path="/sapi/v1/fiat/payments", signed=True, serialize_to=FiatPaymentsHistory)
+    @ BinanceGet(path="/sapi/v1/fiat/payments", signed=True, serialize_to=FiatPaymentsHistory)
     def get_fiat_payments_history(self, transactionType: BinanceFiatPaymentsEnum, beginTime: Optional[int] = None,
                                   endTime: Optional[int] = None, page: Optional[int] = 1, rows: Optional[int] = 100,
                                   recvWindow: Optional[int] = None) -> FiatPaymentsHistory:
         return {"transactionType": transactionType.value, "beginTime": beginTime, "endTime": endTime, "page": page, "rows": rows, "recvWindow": recvWindow}
 
 # C2C
-    @BinanceGet(path="/sapi/v1/c2c/orderMatch/listUserOrderHistory", signed=True, serialize_to=C2CTradeHistory)
+    @ BinanceGet(path="/sapi/v1/c2c/orderMatch/listUserOrderHistory", signed=True, serialize_to=C2CTradeHistory)
     def get_c2c_trade_history(self, tradeType: BinanceC2CTradeTypeEnum, startTimestamp: Optional[int] = None,
                               endTimestamp: Optional[int] = None, page: Optional[int] = 1, rows: Optional[int] = 100,
                               recvWindow: Optional[int] = None) -> C2CTradeHistory:

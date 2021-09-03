@@ -1,3 +1,4 @@
+from python_binance_graphql.models.base_model import BaseModel
 from typing import List
 from dataclasses_json import dataclass_json
 from dataclasses import dataclass
@@ -25,7 +26,7 @@ class FiatPayment:
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
 @strawberry.type
-class FiatPaymentsHistory:
+class FiatPaymentsHistory(BaseModel):
     code: int
     message: str
     data: List[FiatPayment]

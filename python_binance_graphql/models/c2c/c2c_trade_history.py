@@ -1,3 +1,4 @@
+from python_binance_graphql.models.base_model import BaseModel
 from python_binance_graphql.utils.enums import BinanceOrderStatus
 from typing import List, Optional
 from dataclasses_json import dataclass_json
@@ -31,7 +32,7 @@ class C2COrder:
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
 @strawberry.type
-class C2CTradeHistory:
+class C2CTradeHistory(BaseModel):
     code: int
     message: str
     data: List[C2COrder]

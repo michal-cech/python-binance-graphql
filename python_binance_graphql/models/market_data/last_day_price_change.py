@@ -1,0 +1,31 @@
+from dataclasses import dataclass
+from python_binance_graphql.models.base_model import BaseModel
+from dataclasses_json import dataclass_json
+from dataclasses_json.undefined import Undefined
+import strawberry
+from python_binance_graphql.utils.custom_types import BigInt
+
+
+@dataclass_json(undefined=Undefined.EXCLUDE)
+@dataclass
+@strawberry.type
+class LastDayPriceChange(BaseModel):
+    symbol: str
+    priceChange: float
+    priceChangePercent: float
+    weightedAvgPrice: float
+    prevClosePrice: float
+    lastPrice: float
+    lastQty: float
+    bidPrice: float
+    askPrice: float
+    openPrice: float
+    highPrice: float
+    lowPrice: float
+    volume: float
+    quoteVolume: float
+    openTime: BigInt
+    closeTime: BigInt
+    firstId: BigInt
+    lastId: BigInt
+    count: BigInt

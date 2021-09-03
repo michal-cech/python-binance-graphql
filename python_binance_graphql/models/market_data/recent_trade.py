@@ -1,12 +1,12 @@
-from python_binance_graphql.models.base_model import BaseModel
-from dataclasses_json import dataclass_json
 from dataclasses import dataclass
+from dataclasses_json import dataclass_json
 from dataclasses_json.undefined import Undefined
 import strawberry
+from .trade import Trade
 
 
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
 @strawberry.type
-class Withdraw(BaseModel):
-    id: str
+class RecentTrade(Trade):
+    pass

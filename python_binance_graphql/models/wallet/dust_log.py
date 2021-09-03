@@ -1,3 +1,4 @@
+from python_binance_graphql.models.base_model import BaseModel
 from typing import List
 from dataclasses_json import dataclass_json
 from dataclasses import dataclass
@@ -32,6 +33,6 @@ class Dribblet:
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
 @strawberry.type
-class DustLog:
+class DustLog(BaseModel):
     total: int
     userAssetDribblets: List[Dribblet]
