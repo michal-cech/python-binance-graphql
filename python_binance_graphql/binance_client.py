@@ -153,6 +153,10 @@ class BinanceClient:
         return {"asset": asset, "needBtcValuation": needBtcValuation, "recvWindow": recvWindow}
 
 # SAVINGS SECTION
+    @BinanceGet(path="/sapi/v1/lending/daily/product/list", signed=True, serialize_to=FlexibleProduct)
+    def get_flexible_product_list(self, status: Optional[str] = None, featured: Optional[str] = None,
+                                  current: Optional[int] = 1, size: Optional[int] = 50, recvWindow: Optional[int] = None) -> List[FlexibleProduct]:
+        return {"status": status, "featured": featured, "current": current, "size": size, "recvWindow": recvWindow}
 
     @BinanceGet(path="/sapi/v1/lending/daily/token/position", signed=True, serialize_to=SavingsPosition)
     def get_flexible_savings_positions(self, asset: Optional[str] = '', recvWindow: Optional[int] = None) -> List[SavingsPosition]:
