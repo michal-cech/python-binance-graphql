@@ -1,3 +1,4 @@
+from python_binance_graphql.models.base_model import BaseModel
 from typing import Optional
 
 from dataclasses import dataclass
@@ -10,7 +11,7 @@ import strawberry
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
 @strawberry.type
-class NetworkInfo:
+class NetworkInfo(BaseModel):
     addressRegex: Optional[str] = None
     coin: Optional[str] = None
     depositDesc: Optional[str] = None

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from python_binance_graphql.models.base_model import BaseModel
+from typing import Optional
 from dataclasses_json import dataclass_json
 from dataclasses_json.undefined import Undefined
 import strawberry
@@ -8,7 +8,7 @@ import strawberry
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
 @strawberry.type
-class TradeFee(BaseModel):
-    symbol: str
-    makerCommission: float
-    takerCommission: float
+class ExchangeFilter:
+    filterType: str
+    maxNumOrders: Optional[int] = None
+    maxNumAlgoOrders: Optional[int] = None

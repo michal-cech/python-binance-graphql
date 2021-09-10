@@ -1,3 +1,4 @@
+from python_binance_graphql.models.base_model import BaseModel
 from typing import Optional
 
 from dataclasses import dataclass
@@ -11,7 +12,7 @@ import strawberry
 @strawberry.type
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
-class CoinInfo:
+class CoinInfo(BaseModel):
     coin: Optional[str] = None
     free: Optional[float] = None
     freeze: Optional[float] = None

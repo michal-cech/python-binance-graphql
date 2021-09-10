@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from python_binance_graphql.models.base_model import BaseModel
 from typing import Optional
 
 from dataclasses_json import dataclass_json
@@ -10,7 +11,7 @@ import strawberry
 @dataclass_json(undefined=Undefined.EXCLUDE)
 @dataclass
 @strawberry.type
-class OldTradeLookup:
+class OldTradeLookup(BaseModel):
     id: Optional[int] = None
     price: Optional[float] = None
     qty: Optional[float] = None

@@ -1,5 +1,6 @@
 from hashlib import sha256
 from functools import wraps
+from python_binance_graphql.models.base_model import BaseModel
 import time
 from datetime import datetime
 import hmac
@@ -41,10 +42,10 @@ class BinanceRequest:
         return int(datetime.now().timestamp() * 1000)
 
     @staticmethod
-    def _serialize_response(response: dict, cls):
+    def _serialize_response(response: dict, cls: BaseModel):
         if isinstance(response, list):
-            return [cls.from_dict(obj) for obj in response]
-        return cls.from_dict(response)
+            return [cls.serialize(obj) for obj in response]
+        return cls.serialize(response)
 
     def __call__(self, func):
         @wraps(func)
